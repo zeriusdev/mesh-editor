@@ -7,11 +7,12 @@ qt_standard_project_setup()
 
 qt_add_executable(mesh-editor
     WIN32 MACOSX_BUNDLE
-    main.cpp
-    mainwindow.cpp
-    mainwindow.h
-    mainwindow.ui
-    meshviewport.h meshviewport.cpp
+    src/main.cpp
+    src/mainwindow.h
+    src/mainwindow.cpp
+    src/mainwindow.ui
+    src/meshviewport.h
+    src/meshviewport.cpp
 )
 
 target_link_libraries(mesh-editor
