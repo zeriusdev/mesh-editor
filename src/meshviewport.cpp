@@ -1,9 +1,16 @@
 #include "meshviewport.h"
 #include <QMatrix4x4>
+#include <QTimer>
 
 MeshViewport::MeshViewport(QWidget *parent)
     : QOpenGLWidget(parent)
 {
+    QTimer *timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, [this]() {
+        m_angle += 1.0f;
+        update();
+    });
+    timer->start(16);
 }
 
 MeshViewport::~MeshViewport()
@@ -72,7 +79,7 @@ void MeshViewport::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     QMatrix4x4 model;
-    model.rotate(m_angle, 0.0f, 0.0f, 1.0f);
+    model.rotate(m_angle, 1.0f, 0.0f, 1.0f);
     m_program->bind();
     m_program->setUniformValue("model", model);
     m_program->bind();
