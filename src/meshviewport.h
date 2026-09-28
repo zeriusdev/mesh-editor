@@ -12,14 +12,16 @@ class MeshViewport : public QOpenGLWidget, protected QOpenGLFunctions
     Q_OBJECT
 public:
     explicit MeshViewport(QWidget *parent = nullptr);
+    ~MeshViewport() override;
 protected:
     void initializeGL() override;
     void resizeGL(int w, int h) override;
     void paintGL() override;
 private:
-    QOpenGLShaderProgram *program = nullptr;
-    QOpenGLBuffer vbo;
-    QOpenGLVertexArrayObject vao;
+    QOpenGLShaderProgram *m_program = nullptr;
+    QOpenGLBuffer *m_vbo = nullptr;
+    QOpenGLVertexArrayObject *m_vao = nullptr;
+    float m_angle = 0.0f;
 };
 
 #endif // MESHVIEWPORT_H
