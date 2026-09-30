@@ -16,9 +16,9 @@ MeshViewport::MeshViewport(QWidget *parent)
 MeshViewport::~MeshViewport()
 {
     makeCurrent();
-    delete m_program; m_program = nullptr;
-    delete m_vbo;     m_vbo = nullptr;
     delete m_vao;     m_vao = nullptr;
+    delete m_vbo;     m_vbo = nullptr;
+    delete m_program; m_program = nullptr;
     doneCurrent();
 }
 
@@ -26,14 +26,16 @@ void MeshViewport::initializeGL()
 {
     initializeOpenGLFunctions();
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    m_program = new QOpenGLShaderProgram(this);
+    m_program = new QOpenGLShaderProgram();
 
     const char *vertexShader =
         "#version 330 core\n"
         "layout(location = 0) in vec3 pos;\n"
         "uniform mat4 model;\n"
+        "uniform mat4 view;\n"
+        "uniform mat4 projection;\n"
         "void main() {\n"
-        "    gl_Position = model * vec4(pos, 1.0);\n"
+        "    gl_Position = projection * view * model *  vec4(pos, 1.0);\n"
         "}\n";
 
     const char *fragmentShader =
@@ -73,16 +75,23 @@ void MeshViewport::initializeGL()
 void MeshViewport::resizeGL(int w, int h)
 {
     glViewport(0, 0, w, h);
+    m_projection.setToIdentity();
+    m_projection.perspective(45.0f, float(w) / float(h), 0.1f, 100.0f);
 }
 
 void MeshViewport::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     QMatrix4x4 model;
-    model.rotate(m_angle, 1.0f, 0.0f, 1.0f);
+    model.rotate(m_angle, 0.0f, 0.0f, 1.0f);
+    QMatrix4x4 view;
+    view.lookAt(QVector3D(0.0f, 0.0f, 1.0f),
+                QVector3D(0.0f, 0.0f, 0.0f),
+                QVector3D(0.0f, 1.0f, 0.0f));
     m_program->bind();
+    m_program->setUniformValue("projection", m_projection);
     m_program->setUniformValue("model", model);
-    m_program->bind();
+    m_program->setUniformValue("view", view);
     m_vao->bind();
     glDrawArrays(GL_TRIANGLES, 0, 3);
     m_vao->release();

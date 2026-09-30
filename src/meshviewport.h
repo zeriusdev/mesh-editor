@@ -22,6 +22,7 @@ private:
     QOpenGLBuffer *m_vbo = nullptr;
     QOpenGLVertexArrayObject *m_vao = nullptr;
     float m_angle = 0.0f;
+    QMatrix4x4 m_projection;
 };
 
 #endif // MESHVIEWPORT_H
